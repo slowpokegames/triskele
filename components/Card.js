@@ -119,13 +119,19 @@ function Card({
     return rankGF4(vectors) === 2;
   };
 
+  const rotateCard = () => {
+    setTimeout(() => {
+      shown[id].rotation = (shown[id].rotation ?? 0) + 1;
+      setShown([...shown]);
+    }, 450);
+  };
+
   const onCardClick = () => {
     if (flipped) return;
     if (!selected) {
       if (selectedCount >= 5) {
-        shown[id].rotation = (shown[id].rotation ?? 0) + 1;
-        setShown([...shown]);
         rejectAnimation();
+        rotateCard();
         return;
       }
       const newIndexes = [...selectedIndexes, id];
@@ -134,9 +140,8 @@ function Card({
         setSelectedCount(selectedCount + 1);
         setSelectedIndexes(newIndexes);
       } else {
-        shown[id].rotation = (shown[id].rotation ?? 0) + 1;
-        setShown([...shown]);
         rejectAnimation();
+        rotateCard();
       }
     } else {
       // Deselect: remove from selection and rotate 120° CW
