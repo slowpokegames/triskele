@@ -16,13 +16,14 @@ export default function App() {
       <div className="container">
         <div className="row">
           <div className="col-4" />
-          <div className="col-3">High Score: {highScore}</div>
+          <div className="col-3">{options !== 'spread' ? `High Score: ${highScore}` : 'Spread Mode'}</div>
           <div className="col-5">
             {options === null ? (
               <>
                 <button onClick={() => setOptions(25)}>Easy</button>
                 <button onClick={() => setOptions(20)}>Medium</button>
                 <button onClick={() => setOptions(15)}>Hard</button>
+                <button onClick={() => setOptions('spread')}>Spread</button>
               </>
             ) : (
               <>
@@ -53,9 +54,10 @@ export default function App() {
         <div>
           <h2>Select difficulty to begin</h2>
           <p style={{ maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-            Cards are points in PG(3,4). Select 3–5 collinear cards (rank&nbsp;≤&nbsp;2 over GF(4))
-            and press <strong>Take Match!</strong> Deselecting a card rotates it 120°—use this to
-            orient cards onto the same projective line. Score: 1 pt for 3 cards, 3 for 4, 6 for 5.
+            Cards are points in PG(3,4). Select 3–5 collinear cards (rank&nbsp;2 over GF(4))
+            and press <strong>Take Match!</strong> Score: 1 pt for 3 cards, 3 for 4, 6 for 5.
+            In <strong>Spread</strong> mode, all 85 cards are dealt—find 17 disjoint complete lines
+            of 5 that together cover every card exactly once.
           </p>
         </div>
       )}
@@ -162,6 +164,23 @@ export default function App() {
           .col-5 { width: 41.66%; }
         }
         img { max-width: 100%; height: auto; }
+
+        /* Spread mode: 46px cards, column count grows with viewport */
+        #cards.spread { width: 260px; }
+        #cards.spread .card { width: 46px; height: 46px; margin: 3px; }
+        #cards.spread .c { width: 46px; height: 46px; }
+        @media only screen and (min-width: 400px) {
+          #cards.spread { width: 364px; }
+        }
+        @media only screen and (min-width: 540px) {
+          #cards.spread { width: 520px; }
+        }
+        @media only screen and (min-width: 700px) {
+          #cards.spread { width: 676px; }
+        }
+        @media only screen and (min-width: 900px) {
+          #cards.spread { width: 884px; }
+        }
       `}</style>
     </div>
   );

@@ -108,52 +108,75 @@ function findLargestMatch(shown) {
 }
 
 function TriskelGame({ options, setOptions, highScore, setHighScore }) {
+  const spreadMode = options === 'spread';
   const [game, setGame] = useState([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [selectedIndexes, setSelectedIndexes] = useState([]);
   const [shown, setShown] = useState([]);
   const [topOfDeck, setTopOfDeck] = useState(0);
   const [score, setScore] = useState(0);
+  const [setsFound, setSetsFound] = useState(0);
   const [hintMessage, setHintMessage] = useState('');
   const [hintOpacity, setHintOpacity] = useState(0);
 
-  const boardSize = options;
-
   useEffect(() => {
     const cardIds = generateCardIds();
-    const newGame = cardIds.map(id => ({
-      cardId: id,
-      rotation: Math.floor(Math.random() * 3),
-      removed: false,
-    }));
-    const shuffled = newGame.sort(() => Math.random() - 0.5);
-    setGame(shuffled);
-    setShown(shuffled.slice(0, boardSize).map(c => ({ ...c })));
-    setTopOfDeck(boardSize);
+    const allCards = cardIds.map(id => ({ cardId: id, rotation: 0, removed: false }));
+    if (spreadMode) {
+      setGame(allCards);
+      setShown(allCards.map(c => ({ ...c })));
+      setTopOfDeck(allCards.length);
+    } else {
+      const shuffled = allCards.sort(() => Math.random() - 0.5);
+      setGame(shuffled);
+      setShown(shuffled.slice(0, options).map(c => ({ ...c })));
+      setTopOfDeck(options);
+    }
   }, []);
 
   useEffect(() => {
-    if (score > highScore) setHighScore(score);
+    if (!spreadMode && score > highScore) setHighScore(score);
   }, [score]);
 
   const takeMatch = () => {
-    const scoreMap = [0, 0, 0, 1, 3, 6];
-    if (selectedCount >= 3) {
-      setScore(x => x + scoreMap[selectedCount]);
-      setGame(g => [...g]);
-      const newIndexes = [...selectedIndexes];
-      newIndexes.push(false);
-      setSelectedIndexes(newIndexes);
+    if (spreadMode) {
+      if (selectedCount === 5) {
+        setSetsFound(s => s + 1);
+        setGame(g => [...g]);
+        const newIndexes = [...selectedIndexes];
+        newIndexes.push(false);
+        setSelectedIndexes(newIndexes);
+      } else {
+        const newIndexes = [...selectedIndexes];
+        newIndexes.push(true);
+        setSelectedIndexes(newIndexes);
+      }
     } else {
-      const newIndexes = [...selectedIndexes];
-      newIndexes.push(true);
-      setSelectedIndexes(newIndexes);
+      const scoreMap = [0, 0, 0, 1, 3, 6];
+      if (selectedCount >= 3) {
+        setScore(x => x + scoreMap[selectedCount]);
+        setGame(g => [...g]);
+        const newIndexes = [...selectedIndexes];
+        newIndexes.push(false);
+        setSelectedIndexes(newIndexes);
+      } else {
+        const newIndexes = [...selectedIndexes];
+        newIndexes.push(true);
+        setSelectedIndexes(newIndexes);
+      }
     }
   };
 
   const showHint = () => {
     const largest = findLargestMatch(shown);
-    const msg = largest >= 3 ? `Best available match: ${largest} cards` : 'No match available';
+    let msg;
+    if (spreadMode) {
+      if (largest === 5) msg = 'A complete line of 5 exists';
+      else if (largest >= 3) msg = 'No complete lines — try restarting';
+      else msg = 'No matches — restart required';
+    } else {
+      msg = largest >= 3 ? `Best available match: ${largest} cards` : 'No match available';
+    }
     setHintMessage(msg);
     setHintOpacity(1);
     setTimeout(() => setHintOpacity(0), 3000);
@@ -161,10 +184,20 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
 
   if (game.length === 0) return <div>loading...</div>;
 
+  if (spreadMode && setsFound === 17) {
+    return (
+      <div id="game">
+        <h1>Spread Complete!</h1>
+        <p>All 85 cards partitioned into 17 disjoint lines.</p>
+        <button onClick={() => setOptions(null)}>Main Menu</button>
+      </div>
+    );
+  }
+
   return (
     <div id="game">
-      <h1>Score: {score}</h1>
-      <div id="cards">
+      <h1>{spreadMode ? `Lines: ${setsFound} / 17` : `Score: ${score}`}</h1>
+      <div id="cards" className={spreadMode ? 'spread' : ''}>
         {shown.map((card, index) => (
           <div className="card" key={index}>
             <Card
@@ -185,7 +218,7 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
       <div id="match">
         <button
           className="match"
-          style={{ opacity: selectedCount >= 3 ? 1 : 0.45 }}
+          style={{ opacity: (spreadMode ? selectedCount === 5 : selectedCount >= 3) ? 1 : 0.45 }}
           onClick={takeMatch}
         >
           Take Match!
