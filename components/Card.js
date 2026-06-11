@@ -122,13 +122,20 @@ function Card({
   const onCardClick = () => {
     if (flipped) return;
     if (!selected) {
-      if (selectedCount >= 5) return;
+      if (selectedCount >= 5) {
+        shown[id].rotation = (shown[id].rotation ?? 0) + 1;
+        setShown([...shown]);
+        rejectAnimation();
+        return;
+      }
       const newIndexes = [...selectedIndexes, id];
       if (isCollinear(newIndexes)) {
         setSelect(true);
         setSelectedCount(selectedCount + 1);
         setSelectedIndexes(newIndexes);
       } else {
+        shown[id].rotation = (shown[id].rotation ?? 0) + 1;
+        setShown([...shown]);
         rejectAnimation();
       }
     } else {

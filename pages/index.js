@@ -51,14 +51,35 @@ export default function App() {
           setHighScore={setHighScore}
         />
       ) : (
-        <div>
-          <h2>Select difficulty to begin</h2>
-          <p style={{ maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-            Cards are points in PG(3,4). Select 3–5 collinear cards (rank&nbsp;2 over GF(4))
-            and press <strong>Take Match!</strong> Score: 1 pt for 3 cards, 3 for 4, 6 for 5.
-            In <strong>Spread</strong> mode, all 85 cards are dealt—find 17 disjoint complete lines
-            of 5 that together cover every card exactly once.
+        <div style={{ maxWidth: 520, margin: '0 auto', textAlign: 'left', padding: '0 16px' }}>
+          <h2 style={{ textAlign: 'center' }}>How to Play</h2>
+          <p style={{ lineHeight: 1.65 }}>
+            Each card carries colored symbols arranged at specific positions. A valid match is a set
+            of <strong>3, 4, or 5 cards</strong> whose symbols all follow the same underlying line
+            — there is a hidden geometric pattern connecting them. Click cards to select; they glow
+            purple when they belong to a valid group. Clicking a card that doesn&apos;t fit the
+            current selection rotates it 120° — use rotations to reveal new arrangements.
+            Press <strong>Hint!</strong> to check whether any match is available.
           </p>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 8 }}>
+            <tbody>
+              <tr style={{ borderTop: '1px solid #ccc' }}>
+                <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Easy · Medium · Hard</td>
+                <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
+                  25 · 20 · 15 cards dealt from a shuffled deck. Take sets of 3–5 matching cards to score:
+                  3 cards&nbsp;=&nbsp;1&nbsp;pt, 4&nbsp;=&nbsp;3&nbsp;pts, 5&nbsp;=&nbsp;6&nbsp;pts.
+                  Matched cards are replaced from the deck.
+                </td>
+              </tr>
+              <tr style={{ borderTop: '1px solid #ccc' }}>
+                <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Spread</td>
+                <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
+                  All 85 cards are dealt at once. Find all 17 complete lines of 5 that together
+                  cover every card exactly once. Sets of 5 are taken automatically when selected.
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
 

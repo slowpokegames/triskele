@@ -121,11 +121,16 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
 
   useEffect(() => {
     const cardIds = generateCardIds();
-    const allCards = cardIds.map(id => ({ cardId: id, rotation: 0, removed: false }));
+    const allCards = cardIds.map(id => ({
+      cardId: id,
+      rotation: Math.floor(Math.random() * 3),
+      removed: false,
+    }));
     if (spreadMode) {
-      setGame(allCards);
-      setShown(allCards.map(c => ({ ...c })));
-      setTopOfDeck(allCards.length);
+      const shuffled = allCards.sort(() => Math.random() - 0.5);
+      setGame(shuffled);
+      setShown(shuffled.map(c => ({ ...c })));
+      setTopOfDeck(shuffled.length);
     } else {
       const shuffled = allCards.sort(() => Math.random() - 0.5);
       setGame(shuffled);
@@ -138,32 +143,28 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
     if (!spreadMode && score > highScore) setHighScore(score);
   }, [score]);
 
+  // Spread mode: auto-take when exactly 5 collinear cards are selected
+  useEffect(() => {
+    if (!spreadMode || selectedCount !== 5) return;
+    setSetsFound(s => s + 1);
+    setGame(g => [...g]);
+    const newIndexes = [...selectedIndexes];
+    newIndexes.push(false);
+    setSelectedIndexes(newIndexes);
+  }, [selectedCount]);
+
   const takeMatch = () => {
-    if (spreadMode) {
-      if (selectedCount === 5) {
-        setSetsFound(s => s + 1);
-        setGame(g => [...g]);
-        const newIndexes = [...selectedIndexes];
-        newIndexes.push(false);
-        setSelectedIndexes(newIndexes);
-      } else {
-        const newIndexes = [...selectedIndexes];
-        newIndexes.push(true);
-        setSelectedIndexes(newIndexes);
-      }
+    const scoreMap = [0, 0, 0, 1, 3, 6];
+    if (selectedCount >= 3) {
+      setScore(x => x + scoreMap[selectedCount]);
+      setGame(g => [...g]);
+      const newIndexes = [...selectedIndexes];
+      newIndexes.push(false);
+      setSelectedIndexes(newIndexes);
     } else {
-      const scoreMap = [0, 0, 0, 1, 3, 6];
-      if (selectedCount >= 3) {
-        setScore(x => x + scoreMap[selectedCount]);
-        setGame(g => [...g]);
-        const newIndexes = [...selectedIndexes];
-        newIndexes.push(false);
-        setSelectedIndexes(newIndexes);
-      } else {
-        const newIndexes = [...selectedIndexes];
-        newIndexes.push(true);
-        setSelectedIndexes(newIndexes);
-      }
+      const newIndexes = [...selectedIndexes];
+      newIndexes.push(true);
+      setSelectedIndexes(newIndexes);
     }
   };
 
@@ -216,13 +217,15 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
         ))}
       </div>
       <div id="match">
-        <button
-          className="match"
-          style={{ opacity: (spreadMode ? selectedCount === 5 : selectedCount >= 3) ? 1 : 0.45 }}
-          onClick={takeMatch}
-        >
-          Take Match!
-        </button>
+        {!spreadMode && (
+          <button
+            className="match"
+            style={{ opacity: selectedCount >= 3 ? 1 : 0.45 }}
+            onClick={takeMatch}
+          >
+            Take Match!
+          </button>
+        )}
         <button className="match" onClick={showHint}>Hint!</button>
       </div>
       <div
