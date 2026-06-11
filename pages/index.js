@@ -227,22 +227,16 @@ export default function App() {
         }
         img { max-width: 100%; height: auto; }
 
-        /* Spread mode: 64px cards, column count grows with viewport */
-        #cards.spread { width: 288px; }
-        #cards.spread .card { width: 64px; height: 64px; margin: 4px; }
-        #cards.spread .c { width: 64px; height: 64px; }
-        @media only screen and (min-width: 400px) {
-          #cards.spread { width: 360px; }
+        /* Spread mode: fluid grid — fills available width, 72px min per card */
+        #cards.spread {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+          gap: 6px;
+          width: min(95vw, 1400px);
+          max-width: 1400px;
         }
-        @media only screen and (min-width: 520px) {
-          #cards.spread { width: 504px; }
-        }
-        @media only screen and (min-width: 700px) {
-          #cards.spread { width: 648px; }
-        }
-        @media only screen and (min-width: 900px) {
-          #cards.spread { width: 864px; }
-        }
+        #cards.spread .card { width: auto; height: auto; aspect-ratio: 1; margin: 0; }
+        #cards.spread .c { width: 100%; height: 100%; }
       `}</style>
     </div>
   );
