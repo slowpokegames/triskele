@@ -51,76 +51,81 @@ export default function App() {
           setHighScore={setHighScore}
         />
       ) : (
-        <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'left', padding: '0 16px' }}>
+        <div className="intro-wrap">
           <h2 style={{ textAlign: 'center' }}>How to Play</h2>
+          <div className="intro-columns">
+            <div className="intro-left">
+              {/* Orientation */}
+              <p style={{ lineHeight: 1.65 }}>
+                Each card encodes a geometric point. <strong>Orientation doesn&apos;t matter</strong> — the same
+                card rotated looks different but belongs to exactly the same matches. Clicking a card that
+                doesn&apos;t fit the current selection (or deselecting) rotates it 120°; use rotations to
+                explore different arrangements.
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0 18px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
+                <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%', transform: 'rotateZ(120deg)' }} alt="" />
+                <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%', transform: 'rotateZ(240deg)' }} alt="" />
+                <span style={{ color: '#666', fontStyle: 'italic', fontSize: '0.95em' }}>— all the same card</span>
+              </div>
 
-          {/* Orientation */}
-          <p style={{ lineHeight: 1.65 }}>
-            Each card encodes a geometric point. <strong>Orientation doesn&apos;t matter</strong> — the same
-            card rotated looks different but belongs to exactly the same matches. Clicking a card that
-            doesn&apos;t fit the current selection (or deselecting) rotates it 120°; use rotations to
-            explore different arrangements.
-          </p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0 18px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
-            <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%', transform: 'rotateZ(120deg)' }} alt="" />
-            <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%', transform: 'rotateZ(240deg)' }} alt="" />
-            <span style={{ color: '#666', fontStyle: 'italic', fontSize: '0.95em' }}>— all the same card</span>
-          </div>
-
-          {/* Matching rule */}
-          <p style={{ lineHeight: 1.65 }}>
-            A <strong>match</strong> is 3–5 cards on the same line. Any two cards determine their full
-            line of 5. To find a third card from two, compare each symbol type across both cards:
-          </p>
-          <ul style={{ lineHeight: 1.8, margin: '4px 0 10px', paddingLeft: 22 }}>
-            <li><strong>Same symbol, same position in both</strong> → cancels (absent from result)</li>
-            <li><strong>Same symbol, different positions</strong> → moves to the remaining third position
-              <div style={{ fontSize: '0.9em', color: '#555', marginTop: 2 }}>top + bottom-left = bottom-right &nbsp;·&nbsp; top + bottom-right = bottom-left &nbsp;·&nbsp; bottom-left + bottom-right = top</div>
-            </li>
-            <li><strong>Symbol in only one card</strong> → stays at that position</li>
-          </ul>
-
-          {/* Example box */}
-          <div style={{ background: '#f4f0fa', borderRadius: 10, padding: '14px 16px', margin: '4px 0 16px' }}>
-            <div style={{ fontWeight: 700, marginBottom: 10 }}>Example — finding the third card</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-              <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
-              <span style={{ fontSize: '1.5em', color: '#6a3faa' }}>+</span>
-              <img src="cards/1030.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
-              <span style={{ fontSize: '1.5em', color: '#6a3faa' }}>→</span>
-              <img src="cards/0010.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
+              {/* Matching rule */}
+              <p style={{ lineHeight: 1.65 }}>
+                A <strong>match</strong> is 3–5 cards on the same line. Any two cards determine their full
+                line of 5. To find a third card from two, compare each symbol type across both cards:
+              </p>
+              <ul style={{ lineHeight: 1.8, margin: '4px 0 10px', paddingLeft: 22 }}>
+                <li><strong>Same symbol, same position in both</strong> → cancels (absent from result)</li>
+                <li><strong>Same symbol, different positions</strong> → moves to the remaining third position
+                  <div style={{ fontSize: '0.9em', color: '#555', marginTop: 2 }}>top + bottom-left = bottom-right &nbsp;·&nbsp; top + bottom-right = bottom-left &nbsp;·&nbsp; bottom-left + bottom-right = top</div>
+                </li>
+                <li><strong>Symbol in only one card</strong> → stays at that position</li>
+              </ul>
             </div>
-            <ul style={{ margin: '10px 0 0', paddingLeft: 22, lineHeight: 1.75, fontSize: '0.95em' }}>
-              <li>Blue swirl at top in both → <strong>cancels</strong></li>
-              <li>Red triskelion: bottom-left (left card) + bottom-right (middle card) → <strong>top</strong></li>
-            </ul>
-            <p style={{ margin: '10px 0 0', fontSize: '0.9em', color: '#555', lineHeight: 1.6 }}>
-              The remaining two cards on this line are found by rotating one of the cards 120° (or 240°)
-              and applying the same rule again.
-            </p>
-          </div>
 
-          {/* Modes */}
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <tbody>
-              <tr style={{ borderTop: '1px solid #ccc' }}>
-                <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Easy · Medium · Hard</td>
-                <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
-                  25 · 20 · 15 cards dealt from a shuffled deck. Take sets of 3–5 matching cards to score:
-                  3 cards = 1 pt, 4 = 3 pts, 5 = 6 pts. Matched cards are replaced. Press <strong>Hint!</strong> to
-                  check whether any match exists.
-                </td>
-              </tr>
-              <tr style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc' }}>
-                <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Spread</td>
-                <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
-                  All 85 cards are dealt at once. Find all 17 complete lines of 5 that partition every card
-                  exactly once. Sets are taken automatically when 5 matching cards are selected.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            <div className="intro-right">
+              {/* Example box */}
+              <div style={{ background: '#f4f0fa', borderRadius: 10, padding: '14px 16px', margin: '4px 0 16px' }}>
+                <div style={{ fontWeight: 700, marginBottom: 10 }}>Example — finding the third card</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <img src="cards/1020.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
+                  <span style={{ fontSize: '1.5em', color: '#6a3faa' }}>+</span>
+                  <img src="cards/1030.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
+                  <span style={{ fontSize: '1.5em', color: '#6a3faa' }}>→</span>
+                  <img src="cards/0010.png" style={{ width: 72, borderRadius: '50%' }} alt="" />
+                </div>
+                <ul style={{ margin: '10px 0 0', paddingLeft: 22, lineHeight: 1.75, fontSize: '0.95em' }}>
+                  <li>Blue swirl at top in both → <strong>cancels</strong></li>
+                  <li>Red triskelion: bottom-left (left card) + bottom-right (middle card) → <strong>top</strong></li>
+                </ul>
+                <p style={{ margin: '10px 0 0', fontSize: '0.9em', color: '#555', lineHeight: 1.6 }}>
+                  The remaining two cards on this line are found by rotating one of the cards 120° (or 240°)
+                  and applying the same rule again.
+                </p>
+              </div>
+
+              {/* Modes */}
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <tr style={{ borderTop: '1px solid #ccc' }}>
+                    <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Easy · Medium · Hard</td>
+                    <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
+                      25 · 20 · 15 cards dealt from a shuffled deck. Take sets of 3–5 matching cards to score:
+                      3 cards = 1 pt, 4 = 3 pts, 5 = 6 pts. Matched cards are replaced. Press <strong>Hint!</strong> to
+                      check whether any match exists.
+                    </td>
+                  </tr>
+                  <tr style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc' }}>
+                    <td style={{ padding: '8px 12px 8px 0', fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>Spread</td>
+                    <td style={{ padding: '8px 0', lineHeight: 1.55 }}>
+                      All 85 cards are dealt at once. Find all 17 complete lines of 5 that partition every card
+                      exactly once. Sets are taken automatically when 5 matching cards are selected.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
@@ -227,13 +232,34 @@ export default function App() {
         }
         img { max-width: 100%; height: auto; }
 
-        /* Spread mode: fluid grid — fills available width, 72px min per card */
+        /* Intro screen layout */
+        .intro-wrap {
+          max-width: 560px;
+          margin: 0 auto;
+          text-align: left;
+          padding: 0 16px;
+        }
+        @media only screen and (min-width: 860px) {
+          .intro-wrap {
+            max-width: 1000px;
+            padding: 0 24px;
+          }
+          .intro-columns {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+          }
+          .intro-left, .intro-right {
+            flex: 1;
+          }
+        }
+
+        /* Spread mode: card size + column count set dynamically via inline style */
         #cards.spread {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
           gap: 6px;
-          width: min(95vw, 1400px);
-          max-width: 1400px;
+          width: max-content;
+          margin: 0 auto;
         }
         #cards.spread .card { width: auto; height: auto; aspect-ratio: 1; margin: 0; }
         #cards.spread .c { width: 100%; height: 100%; }

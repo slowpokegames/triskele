@@ -118,6 +118,8 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
   const [setsFound, setSetsFound] = useState(0);
   const [hintMessage, setHintMessage] = useState('');
   const [hintOpacity, setHintOpacity] = useState(0);
+  const [spreadCols, setSpreadCols] = useState(9);
+  const [spreadCardSize, setSpreadCardSize] = useState(72);
 
   useEffect(() => {
     const cardIds = generateCardIds();
@@ -142,6 +144,37 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
   useEffect(() => {
     if (!spreadMode && score > highScore) setHighScore(score);
   }, [score]);
+
+  // Spread mode: compute card size to fill ~80% of screen height
+  useEffect(() => {
+    if (!spreadMode) return;
+    function compute() {
+      const gap = 6;
+      const W = Math.min(window.innerWidth * 0.95, 1400);
+      const Havail = Math.max(window.innerHeight - 200, 300);
+      let bestInRange = null;
+      let bestFit = null;
+      for (let N = 1; N <= 85; N++) {
+        const cs = (W - (N - 1) * gap) / N;
+        if (cs < 60) break;
+        const R = Math.ceil(85 / N);
+        const gridH = R * cs + (R - 1) * gap;
+        if (gridH <= Havail) {
+          if (!bestFit) bestFit = { cols: N, size: Math.floor(cs) };
+          if (gridH >= 0.8 * Havail && !bestInRange) {
+            bestInRange = { cols: N, size: Math.floor(cs) };
+            break;
+          }
+        }
+      }
+      const r = bestInRange || bestFit || { cols: 9, size: 72 };
+      setSpreadCols(r.cols);
+      setSpreadCardSize(r.size);
+    }
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [spreadMode]);
 
   // Spread mode: auto-take when exactly 5 collinear cards are selected
   useEffect(() => {
@@ -198,7 +231,11 @@ function TriskelGame({ options, setOptions, highScore, setHighScore }) {
   return (
     <div id="game">
       <h1>{spreadMode ? `Lines: ${setsFound} / 17` : `Score: ${score}`}</h1>
-      <div id="cards" className={spreadMode ? 'spread' : ''}>
+      <div
+        id="cards"
+        className={spreadMode ? 'spread' : ''}
+        style={spreadMode ? { gridTemplateColumns: `repeat(${spreadCols}, ${spreadCardSize}px)` } : {}}
+      >
         {shown.map((card, index) => (
           <div className="card" key={index}>
             <Card
